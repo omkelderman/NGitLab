@@ -1,4 +1,5 @@
 ﻿using NGitLab.Impl;
+using NGitLab.Models;
 
 namespace NGitLab
 {
@@ -16,6 +17,22 @@ namespace NGitLab
         public static GitLabClient Connect(string hostUrl, string apiToken)
         {
             return new GitLabClient(hostUrl, apiToken);
+        }
+
+        public static Session LoginWithUsername(string hostUrl, string username, string password)
+        {
+            return Login(hostUrl, new LoginRequest() {Login = username, Password = password});
+        }
+
+        public static Session LoginWithEmail(string hostUrl, string email, string password)
+        {
+            return Login(hostUrl, new LoginRequest() { Email = email, Password = password });
+        }
+
+        private static Session Login(string hostUrl, LoginRequest loginRequest)
+        {
+            var gitlabApi = new API(hostUrl, null);
+            return gitlabApi.Post().With(loginRequest).To<Session>("/session");
         }
 
         private readonly API _api;
